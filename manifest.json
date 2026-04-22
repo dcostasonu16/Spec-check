@@ -9,8 +9,7 @@
     "storage"
   ],
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon.png"
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
@@ -22,9 +21,5 @@
       "js": ["content.js"],
       "run_at": "document_idle"
     }
-  ],
-  "icons": {
-    "48": "icon.png",
-    "128": "icon.png"
-  }
+  ]
 }
