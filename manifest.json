@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Spec-Check: AI Privacy Guardian",
+  "version": "1.0",
+  "description": "An ethical AI tool that flags sensitive data before it reaches Generative AI models.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*",
+        "https://claude.ai/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+}
