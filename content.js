@@ -1,37 +1,49 @@
-console.log("Spec-Check is now active and protecting your data.");
+console.log("Spec-Check: Active and scanning...");
 
-// These are "Regex" patterns. They tell the computer what an email or ID looks like.
 const privacyPatterns = {
     email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
-    // Change the pattern below to match your school's ID format! 
-    // This one looks for a capital S followed by 4 or more numbers (e.g., S12345)
     studentID: /S\d{4,}/g 
 };
 
-// This function scans the text area
-function scanForPrivacy(element) {
-    const text = element.value || element.innerText;
+// This function checks the text and applies the "Red Alert" style
+function checkElement(el) {
+    // We check both .value (for inputs) and .innerText (for fancy divs)
+    const text = el.value || el.innerText || "";
     
-    let foundRisk = false;
-    if (privacyPatterns.email.test(text) || privacyPatterns.studentID.test(text)) {
-        foundRisk = true;
-    }
+    const hasEmail = privacyPatterns.email.test(text);
+    const hasID = privacyPatterns.studentID.test(text);
 
-    if (foundRisk) {
-        // Change the border to red to warn the student
-        element.style.border = "3px solid #ff4d4d";
-        element.style.backgroundColor = "#fff2f2";
+    if (hasEmail || hasID) {
+        el.style.backgroundColor = "#ffebee"; // Light red
+        el.style.border = "2px solid #f44336"; // Red border
+        console.warn("⚠️ Spec-Check: Sensitive data detected!");
     } else {
-        // Reset to normal if no risk is found
-        element.style.border = "";
-        element.style.backgroundColor = "";
+        // Only reset if we previously flagged it
+        if (el.style.backgroundColor === "rgb(255, 235, 238)") {
+            el.style.backgroundColor = "";
+            el.style.border = "";
+        }
     }
 }
 
-// This "Event Listener" triggers every time you type a character
-document.addEventListener('input', (event) => {
-    // Only scan if we are typing in a text box or input field
-    if (event.target.tagName === 'TEXTAREA' || event.target.tagName === 'INPUT' || event.target.isContentEditable) {
-        scanForPrivacy(event.target);
-    }
+// THE MOTION SENSOR: This watches for ANY typing or changes in the DOM
+const observer = new MutationObserver((mutations) => {
+    // Find all possible text areas on the page
+    const inputs = document.querySelectorAll('textarea, input, [contenteditable="true"], #prompt-textarea, .ql-editor');
+    inputs.forEach(input => {
+        checkElement(input);
+        
+        // Also attach a direct listener just in case
+        if (!input.dataset.specCheckAttached) {
+            input.addEventListener('input', () => checkElement(input));
+            input.dataset.specCheckAttached = "true";
+        }
+    });
+});
+
+// Start watching the whole page
+observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true
 });
