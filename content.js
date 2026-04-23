@@ -41,7 +41,7 @@ function scrubData(target) {
 
     // Visual Feedback
     badge.style.background = "#22c55e";
-    badge.innerText = "🛡️ Data Secured!";
+    badge.innerText = "Data Secured!";
     setTimeout(() => { badge.style.display = "none"; }, 2000);
 }
 
