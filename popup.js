@@ -48,3 +48,22 @@ document.getElementById('reportBtn').addEventListener('click', () => {
         window.open(url);
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggles = ['toggle-identity', 'toggle-secrets', 'toggle-network'];
+    
+    // 1. Load saved settings when popup opens
+    chrome.storage.local.get(toggles, (result) => {
+        toggles.forEach(id => {
+            // Default to 'true' (ON) if no setting exists yet
+            document.getElementById(id).checked = result[id] !== false;
+        });
+    });
+
+    // 2. Save settings when a user flips a switch
+    toggles.forEach(id => {
+        document.getElementById(id).addEventListener('change', (e) => {
+            chrome.storage.local.set({ [id]: e.target.checked });
+        });
+    });
+});
