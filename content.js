@@ -1,15 +1,15 @@
-console.log("Spec-Check: Technical Shield Active...");
+console.log("Spec-Check: Advanced Cyber-Shield Active...");
 
-// 1. The Pattern Library
+// 1. Patterns Library
 const privacyPatterns = {
     email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
     studentID: /S\d{4,}/g,
     phone: /(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g,
-    apiKey: /(?:sk-|AIza|ghp_|sq0csp-)[a-zA-Z0-9]{16,}/g,
-    ipv4: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g
+    APIkey: /(?:sk-|AIza|ghp_|sq0csp-)[a-zA-Z0-9]{16,}/g,
+    IPv4: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g
 };
 
-// 2. The "Invincible" Shadow DOM Setup
+// 2. Shadow DOM Setup
 let container = document.getElementById('spec-check-container');
 if (!container) {
     container = document.createElement('div');
@@ -21,7 +21,7 @@ const shadow = container.attachShadow({mode: 'open'});
 const badge = document.createElement('div');
 badge.id = 'spec-check-badge';
 
-// Modern UI Styling for the Badge Container
+// Modern UI Style 
 badge.style = `
     position: fixed !important; 
     bottom: 30px !important; 
@@ -42,7 +42,7 @@ badge.style = `
 `;
 shadow.appendChild(badge);
 
-// Sticky CSS for Red Box highlights
+// Red Box highlights
 const style = document.createElement('style');
 style.innerHTML = `
     .spec-check-danger {
@@ -52,7 +52,7 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-// 3. The Scrubber (Action)
+// 3. Manual Redacter
 function scrubData(target) {
     chrome.storage.local.get(['toggle-identity', 'toggle-secrets', 'toggle-network', 'blockedCount'], (result) => {
         let text = target.value || target.innerText || "";
@@ -69,8 +69,8 @@ function scrubData(target) {
         checkAndCount(privacyPatterns.email, 'toggle-identity');
         checkAndCount(privacyPatterns.studentID, 'toggle-identity');
         checkAndCount(privacyPatterns.phone, 'toggle-identity');
-        checkAndCount(privacyPatterns.apiKey, 'toggle-secrets');
-        checkAndCount(privacyPatterns.ipv4, 'toggle-network');
+        checkAndCount(privacyPatterns.APIkey, 'toggle-secrets');
+        checkAndCount(privacyPatterns.IPv4, 'toggle-network');
 
         if (result['toggle-identity'] !== false) {
             cleanText = cleanText.replace(privacyPatterns.email, "[PROTECTED_EMAIL]");
@@ -78,10 +78,10 @@ function scrubData(target) {
             cleanText = cleanText.replace(privacyPatterns.phone, "[PROTECTED_PHONE]");
         }
         if (result['toggle-secrets'] !== false) {
-            cleanText = cleanText.replace(privacyPatterns.apiKey, "[SECRET_API_KEY]");
+            cleanText = cleanText.replace(privacyPatterns.APIkey, "[SECRET_API_KEY]");
         }
         if (result['toggle-network'] !== false) {
-            cleanText = cleanText.replace(privacyPatterns.ipv4, "[INTERNAL_IP]");
+            cleanText = cleanText.replace(privacyPatterns.IPv4, "[INTERNAL_IP]");
         }
 
         if (target.value !== undefined) target.value = cleanText;
@@ -97,7 +97,7 @@ function scrubData(target) {
     });
 }
 
-// 4. Fixed Detection Logic
+// 4. Detection Logic
 function checkElement(el) {
     const text = el.value || el.innerText || "";
     
@@ -110,10 +110,10 @@ function checkElement(el) {
             if (text.match(privacyPatterns.phone)) activeRisks.push("Phone");
         }
         if (settings['toggle-secrets'] !== false) {
-            if (text.match(privacyPatterns.apiKey)) activeRisks.push("API Key");
+            if (text.match(privacyPatterns.APIkey)) activeRisks.push("API Key");
         }
         if (settings['toggle-network'] !== false) {
-            if (text.match(privacyPatterns.ipv4)) activeRisks.push("IP");
+            if (text.match(privacyPatterns.IPv4)) activeRisks.push("IP");
         }
 
         if (activeRisks.length > 0) {
@@ -162,7 +162,7 @@ function checkElement(el) {
     });
 }
 
-// 5. The "High-Response" Observer
+// 5. The Observer
 const observer = new MutationObserver(() => {
     const inputs = document.querySelectorAll('textarea, input, [contenteditable="true"], #prompt-textarea, .ProseMirror');
     
