@@ -23,21 +23,24 @@ document.body.appendChild(badge);
 
 // 3. The Scrubber (Action)
 function scrubData(target) {
-    chrome.storage.local.get(['toggle-identity', 'toggle-secrets', 'toggle-network'], (settings) => {
+    chrome.storage.local.get(['toggle-identity', 'toggle-secrets', 'toggle-network', 'blockedCount'], (result) => {
         let text = target.value || target.innerText || "";
         let cleanText = text;
+        let countThisSession = 0;
 
-        if (settings['toggle-identity'] !== false) {
+        // Logic to count and replace
+        if (result['toggle-identity'] !== false) {
+            const emailMatches = text.match(privacyPatterns.email);
+            if (emailMatches) countThisSession += emailMatches.length;
+            // ... same for IDs and Phone
             cleanText = cleanText.replace(privacyPatterns.email, "[PROTECTED_EMAIL]");
             cleanText = cleanText.replace(privacyPatterns.studentID, "[PROTECTED_ID]");
             cleanText = cleanText.replace(privacyPatterns.phone, "[PROTECTED_PHONE]");
         }
-        if (settings['toggle-secrets'] !== false) {
-            cleanText = cleanText.replace(privacyPatterns.apiKey, "[SECRET_API_KEY]");
-        }
-        if (settings['toggle-network'] !== false) {
-            cleanText = cleanText.replace(privacyPatterns.ipv4, "[INTERNAL_IP]");
-        }
+        
+        // Update the total count in storage
+        const newTotal = (result.blockedCount || 0) + (countThisSession || 1); 
+        chrome.storage.local.set({ 'blockedCount': newTotal });
 
         if (target.value !== undefined) target.value = cleanText;
         else target.innerText = cleanText;
@@ -47,7 +50,6 @@ function scrubData(target) {
         setTimeout(() => { badge.style.display = "none"; }, 2000);
     });
 }
-
 // 4. The Detection Logic (Where you add your code)
 function checkElement(el) {
     const text = el.value || el.innerText || "";
