@@ -10,7 +10,6 @@ const privacyPatterns = {
 };
 
 // 2. The "Invincible" Shadow DOM Setup
-// This protects the badge from being deleted or styled by the website
 let container = document.getElementById('spec-check-container');
 if (!container) {
     container = document.createElement('div');
@@ -21,25 +20,29 @@ if (!container) {
 const shadow = container.attachShadow({mode: 'open'});
 const badge = document.createElement('div');
 badge.id = 'spec-check-badge';
+
+// Modern UI Styling for the Badge Container
 badge.style = `
     position: fixed !important; 
     bottom: 30px !important; 
     right: 30px !important; 
     z-index: 2147483647 !important; 
-    padding: 12px 18px; 
+    padding: 16px; 
     background: #ef4444; 
     color: white; 
-    border-radius: 12px; 
-    font-family: sans-serif; 
-    font-weight: bold; 
+    border-radius: 14px; 
+    font-family: 'Inter', -apple-system, sans-serif; 
     display: none; 
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5); 
-    border: 2px solid rgba(255,255,255,0.3);
-    cursor: pointer;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.2);
+    min-width: 200px;
 `;
 shadow.appendChild(badge);
 
-// Add Sticky CSS for the Red Box highlights
+// Sticky CSS for Red Box highlights
 const style = document.createElement('style');
 style.innerHTML = `
     .spec-check-danger {
@@ -87,8 +90,9 @@ function scrubData(target) {
         const newTotal = (result.blockedCount || 0) + foundThisTime;
         chrome.storage.local.set({ 'blockedCount': newTotal });
 
+        // Success UI Feedback
         badge.style.background = "#22c55e";
-        badge.innerText = `🛡️ ${foundThisTime} Items Secured!`;
+        badge.innerHTML = `<div style="font-weight: bold;">🛡️ ${foundThisTime} Items Secured!</div>`;
         setTimeout(() => { badge.style.display = "none"; }, 2000);
     });
 }
@@ -101,29 +105,56 @@ function checkElement(el) {
         let activeRisks = [];
 
         if (settings['toggle-identity'] !== false) {
-            if (text.match(privacyPatterns.email)) activeRisks.push("email");
-            if (text.match(privacyPatterns.studentID)) activeRisks.push("studentID");
-            if (text.match(privacyPatterns.phone)) activeRisks.push("phone");
+            if (text.match(privacyPatterns.email)) activeRisks.push("Email");
+            if (text.match(privacyPatterns.studentID)) activeRisks.push("ID");
+            if (text.match(privacyPatterns.phone)) activeRisks.push("Phone");
         }
         if (settings['toggle-secrets'] !== false) {
-            if (text.match(privacyPatterns.apiKey)) activeRisks.push("apiKey");
+            if (text.match(privacyPatterns.apiKey)) activeRisks.push("API Key");
         }
         if (settings['toggle-network'] !== false) {
-            if (text.match(privacyPatterns.ipv4)) activeRisks.push("ipv4");
+            if (text.match(privacyPatterns.ipv4)) activeRisks.push("IP");
         }
 
         if (activeRisks.length > 0) {
             el.classList.add('spec-check-danger');
             
-            // Updated text to be more descriptive and action-oriented
+            // Generate content with the Green Redact Button
+            badge.style.background = "#ef4444";
             badge.innerHTML = `
-                <div style="font-size: 11px; opacity: 0.9; margin-bottom: 2px;">⚠️ Risk Found: ${activeRisks.join(", ")}</div>
-                <div style="font-size: 14px;">Click to Redact Private Info 🛡️</div>
+                <div style="font-weight: 600; font-size: 13px; text-align: center; line-height: 1.4;">
+                    ⚠️ Risk: ${activeRisks.join(", ")} Detected
+                </div>
+                <button id="redact-now-btn" style="
+                    background: #22c55e; 
+                    color: white; 
+                    border: none; 
+                    padding: 10px 16px; 
+                    border-radius: 8px; 
+                    font-weight: bold; 
+                    cursor: pointer;
+                    width: 100%;
+                    font-family: sans-serif;
+                    font-size: 13px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    transition: transform 0.1s;
+                ">Redact Private Info Now 🛡️</button>
             `;
             
-            badge.style.display = "block";
-            badge.style.background = "#ef4444";
-            badge.onclick = () => scrubData(el);
+            badge.style.display = "flex";
+
+            // Attach click to the button
+            const btn = shadow.getElementById('redact-now-btn');
+            if (btn) {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    scrubData(el);
+                };
+                // Adding a tiny click effect
+                btn.onmousedown = () => btn.style.transform = "scale(0.95)";
+                btn.onmouseup = () => btn.style.transform = "scale(1)";
+            }
+
         } else {
             el.classList.remove('spec-check-danger');
             badge.style.display = "none";
