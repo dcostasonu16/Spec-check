@@ -13,13 +13,26 @@ const privacyPatterns = {
 const badge = document.createElement('div');
 badge.id = 'spec-check-badge';
 badge.style = `
-    position: fixed; bottom: 20px; right: 20px; z-index: 9999;
-    padding: 12px 18px; background: #38bdf8; color: #0f172a;
-    border-radius: 12px; font-family: sans-serif; font-weight: bold;
-    display: none; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
+    position: fixed !important; 
+    bottom: 30px !important; 
+    right: 30px !important; 
+    z-index: 2147483647 !important; /* Maximum possible z-index */
+    padding: 12px 18px; 
+    background: #ef4444; 
+    color: white;
+    border-radius: 12px; 
+    font-family: sans-serif; 
+    font-weight: bold;
+    display: none; 
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.3); 
+    cursor: pointer;
+    pointer-events: auto !important;
 `;
-document.body.appendChild(badge);
+// Ensure the badge is always the last child of the body
+if (!document.getElementById('spec-check-badge')) {
+    document.body.appendChild(badge);
+}
 
 // 3. The Scrubber (Action)
 function scrubData(target) {
