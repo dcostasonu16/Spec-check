@@ -3,7 +3,7 @@ A browser extension that uses NLP to scan a user’s prompt before it’s sent t
 
 ---
 
-### High-Level Overview
+### Overview
 In an era where Generative AI is a daily tool for education and work, we often forget that our prompts are not inherently private. **PromptArmor** is a browser-integrated security shield that acts as a real-time "firewall" for your thoughts. 
 
 Before your data ever reaches the servers of ChatGPT, Gemini, or Claude, PromptArmor scans your input for sensitive information—like emails, IDs, phone numbers, and API keys. It gives you a "one-click" option to redact that data, ensuring you get the benefits of AI without the risk of a permanent data leak.
