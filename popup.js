@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Load the Stats (Blocked Counter) with Animation
+    // 1. Load the Stats (Blocked Counter)
     chrome.storage.local.get(['blockedCount'], (result) => {
         const countElement = document.getElementById('leaks-blocked');
         const total = result.blockedCount || 0;
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 3. Generate Report Logic
+    // 3. Generate Report
     document.getElementById('reportBtn').addEventListener('click', () => {
         chrome.storage.local.get(['blockedCount'], (result) => {
             const count = result.blockedCount || 0;
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Smooth Counter Animation
+// Counter Animation
 function animateValue(obj, start, end, duration) {
     if (start === end) {
         obj.innerHTML = end;
