@@ -114,7 +114,13 @@ function checkElement(el) {
 
         if (activeRisks.length > 0) {
             el.classList.add('spec-check-danger');
-            badge.innerText = `⚠️ Risk Found: ${activeRisks.join(", ")}`;
+            
+            // Updated text to be more descriptive and action-oriented
+            badge.innerHTML = `
+                <div style="font-size: 11px; opacity: 0.9; margin-bottom: 2px;">⚠️ Risk Found: ${activeRisks.join(", ")}</div>
+                <div style="font-size: 14px;">Click to Redact Private Info 🛡️</div>
+            `;
+            
             badge.style.display = "block";
             badge.style.background = "#ef4444";
             badge.onclick = () => scrubData(el);
