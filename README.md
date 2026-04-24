@@ -31,8 +31,8 @@ The PromptArmor UI utilizes a dark slate palette with indigo and violet accents 
 ### Setup & Installation
 PromptArmor is built on **Chrome Manifest V3**, the latest and most secure standard for browser extensions. No external dependencies are required.
 
-1. **Download the Project:** Clone this repository or download the '.zip file' and extract it.
-2. **Open Chrome Extensions:** In your browser, go to 'chrome://extensions/'.
+1. **Download the Project:** Clone this repository or download the `.zip file` and extract it.
+2. **Open Chrome Extensions:** In your browser, go to `chrome://extensions/`.
 3. **Enable Developer Mode:** Toggle the switch in the top-right corner to ON.
 4. **Load the Extension:** Click the "Load unpacked" button in the top-left.
 5. **Select Folder:** Choose the folder containing the manifest.json and the project files.
