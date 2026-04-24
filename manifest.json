@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Spec-Check: AI Privacy Guardian",
+  "name": "Privora: AI Privacy Guardian",
   "version": "1.0",
   "description": "An ethical AI tool that flags sensitive data before it reaches Generative AI models.",
   "permissions": [
