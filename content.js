@@ -74,13 +74,28 @@ function scrubData(target) {
 }
 
 // 4. Fixed Detection Logic
+// 1. Add Sticky CSS to the page header
+const style = document.createElement('style');
+style.innerHTML = `
+    .spec-check-danger {
+        border: 2px solid #ef4444 !important;
+        background-color: #fff5f5 !important;
+    }
+    #spec-check-badge {
+        position: fixed; bottom: 20px; right: 20px; z-index: 10000;
+        padding: 12px 18px; background: #ef4444; color: white;
+        border-radius: 12px; font-family: sans-serif; font-weight: bold;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4); cursor: pointer;
+    }
+`;
+document.head.appendChild(style);
+
 function checkElement(el) {
     const text = el.value || el.innerText || "";
     
     chrome.storage.local.get(['toggle-identity', 'toggle-secrets', 'toggle-network'], (settings) => {
         let activeRisks = [];
 
-        // Check if settings are ON (default to true if undefined)
         if (settings['toggle-identity'] !== false) {
             if (text.match(privacyPatterns.email)) activeRisks.push("email");
             if (text.match(privacyPatterns.studentID)) activeRisks.push("studentID");
@@ -94,19 +109,14 @@ function checkElement(el) {
         }
 
         if (activeRisks.length > 0) {
-            // THE RED BOX: Making it loud and clear
-            el.style.border = "2px solid #ef4444"; 
-            el.style.backgroundColor = "#fff5f5"; 
-            
-            badge.innerText = `Risk Found: ${activeRisks.join(", ")}`;
+            // Apply the sticky CSS class instead of manual styles
+            el.classList.add('spec-check-danger');
+            badge.innerText = `⚠️ Risk Found: ${activeRisks.join(", ")}`;
             badge.style.display = "block";
-            badge.style.background = "#ef4444"; // Warning Red
-            badge.style.color = "white";
             badge.onclick = () => scrubData(el);
         } else {
-            // RESET: Only if no risks are left
-            el.style.border = "";
-            el.style.backgroundColor = "";
+            // Remove the sticky class
+            el.classList.remove('spec-check-danger');
             badge.style.display = "none";
         }
     });
