@@ -136,22 +136,31 @@ function checkElement(el) {
 }
 
 // 5. The Observer (With a "Glitch Filter")
-let timeout = null;
 const observer = new MutationObserver(() => {
     const inputs = document.querySelectorAll('textarea, input, [contenteditable="true"], #prompt-textarea, .ProseMirror');
     
     inputs.forEach(input => {
-        // Prevent the "glitch" by waiting for the user to stop typing for 100ms
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            checkElement(input);
-        }, 100);
+        // Run check IMMEDIATELY so it doesn't flicker
+        checkElement(input);
 
         if (!input.dataset.specCheckAttached) {
+            // Watch for typing
             input.addEventListener('input', () => checkElement(input));
+            // Watch for clicks (in case the site clears styles on click)
+            input.addEventListener('click', () => checkElement(input));
             input.dataset.specCheckAttached = "true";
         }
     });
+
+    // CRITICAL: If the AI website deletes your badge, this puts it back instantly
+    if (!document.getElementById('spec-check-badge')) {
+        document.body.appendChild(badge);
+    }
 });
 
-observer.observe(document.body, { childList: true, subtree: true });
+// Watch for everything: text changes, new boxes, and deletions
+observer.observe(document.body, { 
+    childList: true, 
+    subtree: true, 
+    characterData: true 
+});
